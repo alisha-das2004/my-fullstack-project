@@ -15,17 +15,16 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.backend.dto.ProductRequestDTO;
 import com.example.backend.dto.ProductResponseDTO;
 import com.example.backend.service.ProductService;
+import com.example.backend.service.ProductServiceImpl;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-       private final ProductService productService;
+	private final ProductService productService;
 
-	   public ProductController(ProductService productService) {
-		super();
-		this.productService = productService;
-	   }
-        
+	public ProductController(ProductService productService) {
+	    this.productService = productService;
+	}
 	   @PostMapping
 	   @ResponseStatus(HttpStatus.CREATED)
        public ProductResponseDTO addProduct(@RequestBody ProductRequestDTO request) {
