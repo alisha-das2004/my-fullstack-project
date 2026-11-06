@@ -38,18 +38,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		  
 		  Cookie[] cookies = request.getCookies();
 		  
+		  
+		  
 		  if(cookies != null) {
 			  for(Cookie cookie : cookies) {
+				  
+				  
 				  if("accessToken".equals(cookie.getName())) {
 					  token = cookie.getValue();
+					  
 					  break;
 				  }
 			  }
 		  }
 		  if(token == null || token.isEmpty()) {
+			  System.out.println("JWT token is missing");
 			  filterChain.doFilter(request, response);
 			  return;
 		  }
+		  
 		  
 		  try {
 			

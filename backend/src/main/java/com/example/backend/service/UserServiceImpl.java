@@ -130,6 +130,7 @@ public class UserServiceImpl implements UserService {
 
         // Find the user using their email.
         User user = userRepository.findByEmail(email);
+        
 
         // Check the user and password.
         if (user == null ||
@@ -141,6 +142,7 @@ public class UserServiceImpl implements UserService {
                     HttpStatus.UNAUTHORIZED,
                     "Invalid email or password");
         }
+        
 
         // Generate a JWT after successful login.
         String token = jwtService.generateToken(

@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.backend.dto.ProductRequestDTO;
 import com.example.backend.dto.ProductResponseDTO;
 import com.example.backend.entity.Product;
+import com.example.backend.exception.ProductNotFoundException;
 import com.example.backend.repository.ProductRepository;
 
 @Service
@@ -55,11 +59,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDTO getProductById(Long id) {
 
-        Product product = productRepository.findById(id).orElse(null);
+        Product product = productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product not found with id: " + id));
 
-        if (product == null) {
-            return null;
-        }
 
         return convertToResponseDTO(product);
     }
@@ -81,10 +82,8 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductResponseDTO updateProduct(Long id, ProductRequestDTO request) {
 		 
-		Product product = productRepository.findById(id).orElse(null);
-		if(product == null) {
-			return null;
-		}
+		Product product = productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product not found with id: " + id));
+		
 		product.setName(request.getName());
 		product.setDescription(request.getDescription());
 		product.setPrice(request.getPrice());
@@ -97,12 +96,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void deleteProduct(Long id) {
-		Product product = productRepository.findById(id).orElse(null);
+		Product product = productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product not found with id: " + id));
 		
-		if(product==null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product Not Found with Id:"+ id);
-			
-		}
+		
 		productRepository.delete(product);
 		
 		
@@ -146,6 +142,22 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return responses;
 	}
+
+	@Override
+	public Page<ProductResponseDTO> getProductsWithPagination(int page, int size) {
+		if(page<0 || size<1 || size > 100) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+					"Page must be non-negative and size must be between 1 and 100");
+			
+		}
+		Pageable pageable = PageRequest.of(page, size);
+		
+		Page<Product> products = productRepository.findAll(pageable);
+		
+		return products.map(this:: convertToResponseDTO);
+	}
+	
+	
 	
 	
     

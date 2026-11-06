@@ -1,11 +1,30 @@
 package com.example.backend.dto;
 
+
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
 public class ProductRequestDTO {
 
+	@NotBlank(message =  "Product name is required")
+	@Size(max = 150,message = "Product name cannot exceed 150 characters")
 	private String name;
+	
+	 @Size(max = 1000, message = "Description cannot exceed 1000 characters")
 	private String description;
-	private double price;
-	private int stockQuantity;
+	 
+	  @NotNull(message = "Price is required")
+	    @DecimalMin(value = "0.0", inclusive = false,
+	            message = "Price must be greater than zero")
+	private Double price;
+	  
+	  @NotNull(message = "Stock quantity is required")
+	    @PositiveOrZero(message = "Stock quantity cannot be negative")
+	private Integer stockQuantity;
 	public ProductRequestDTO() {
 		
 	}
@@ -21,18 +40,19 @@ public class ProductRequestDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public int getStockQuantity() {
+	public Integer getStockQuantity() {
 		return stockQuantity;
 	}
-	public void setStockQuantity(int stockQuantity) {
+	public void setStockQuantity(Integer stockQuantity) {
 		this.stockQuantity = stockQuantity;
 	}
+	
 	
 	
 }

@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import com.example.backend.dto.ProductRequestDTO;
 import com.example.backend.dto.ProductResponseDTO;
 import com.example.backend.service.ProductService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 
 
@@ -34,7 +36,7 @@ public class ProductController {
 	}
 	   @PostMapping
 	   @ResponseStatus(HttpStatus.CREATED)
-       public ProductResponseDTO addProduct(@RequestBody ProductRequestDTO request) {
+       public ProductResponseDTO addProduct(@Valid    @RequestBody ProductRequestDTO request) {
     	   return productService.addProduct(request);
        }
 	   @GetMapping
@@ -44,23 +46,13 @@ public class ProductController {
 	   
 	   @GetMapping("/{id}")
 	   public ProductResponseDTO getProductById( @PathVariable Long id) {
-		   ProductResponseDTO response = productService.getProductById(id);
-		   if(response == null) {
-			   throw new ResponseStatusException(
-	                    HttpStatus.NOT_FOUND,
-	                    "Product not found with id: " + id);
-		   }
-		   return response;
+		   
+		   return productService.getProductById(id);
 	   }
 	   @PutMapping("/{id}")
-       public ProductResponseDTO updateProduct(@PathVariable Long id,@RequestBody ProductRequestDTO request) {
-    	               
-    	   ProductResponseDTO response = productService.updateProduct(id, request);
-    	   if(response == null) {
-    		   throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found with id:"+id);
-    		   
-    	   }
-    	   return response;
+       public ProductResponseDTO updateProduct(@PathVariable Long id,@Valid  @RequestBody ProductRequestDTO request) {
+    	   
+    	   return productService.updateProduct(id, request);
        }
 	   
 	   @DeleteMapping("/{id}")
@@ -86,5 +78,11 @@ public class ProductController {
 	   @GetMapping("/sort")
 	   public List<ProductResponseDTO> sortProductByPrice(@RequestParam(defaultValue ="asc") String direction){
 		   return productService.sortProductsByPrice(direction);
+	   }
+	   
+	   @GetMapping("/page")
+	   public Page<ProductResponseDTO> getProductsWithPagination(@RequestParam(defaultValue = "0") int page,
+			   @RequestParam(defaultValue = "10") int size){
+		   return productService.getProductsWithPagination(page, size);
 	   }
 }

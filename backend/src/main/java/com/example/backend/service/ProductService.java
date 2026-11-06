@@ -3,6 +3,8 @@ package com.example.backend.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.example.backend.dto.ProductRequestDTO;
 import com.example.backend.dto.ProductResponseDTO;
 
@@ -23,5 +25,8 @@ public interface ProductService {
     List<ProductResponseDTO> filterProductByPrice(BigDecimal minPrice,BigDecimal maxPrice);
     
     List<ProductResponseDTO>  sortProductsByPrice(String direction);
+    
+    Page<ProductResponseDTO> getProductsWithPagination(int page,int size);
+    
     
 }
